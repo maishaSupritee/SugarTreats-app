@@ -3,10 +3,10 @@ from django.shortcuts import render
 
 # Create your views here.
 def home(request):
-    return HttpResponse("home")
+    return render(request,"ecomm/dashboard.html")
 
 def products(request):
-    return HttpResponse("products")
+    return render(request,"ecomm/products.html")
 
 def customers(request):
-    return HttpResponse("customers")
+    return render(request,"ecomm/customers.html")
