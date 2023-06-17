@@ -1,4 +1,5 @@
 {% include "ecomm/navbar.html" %}
+{% load static %}
 <head>
   <title>Sugar Treats</title>
   <link
@@ -7,24 +8,8 @@
     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
     crossorigin="anonymous"
   />
+  <link rel="stylesheet" type="text/css" href="{% static "/css/main.css" %}">
 </head>
-<style>
-  #logo{
-
-  }
-  body{
-    background-color: #ebeff5;
-  }
-  #orders-delivered{
-    background-color: #726fa3;
-  }
-  #orders-fulfilled{
-    background-color: #b18deb;
-  }
-  #orders-pending{
-    background-color: #8f6fa3;
-  }
-</style>
 <body>
   {% block content%} {% endblock %}
 
