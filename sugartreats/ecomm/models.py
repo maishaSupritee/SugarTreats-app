@@ -36,7 +36,8 @@ class Product(models.Model):
     def __str__(self):
         result = str(self.name) + " #" + str(self.product_num) #adding str infront of self.name because name could be null which could give error
         return result
-    
+
+
 class Order(models.Model):
     STATUS = (
         ("Pending", "Pending"),
@@ -44,7 +45,21 @@ class Order(models.Model):
         ("Delivered","Delivered"),
     )
     customer = models.ForeignKey(Customer, null = True, on_delete = models.SET_NULL)
-    product = models.ForeignKey(Product, null = True, on_delete = models.SET_NULL)
+    #product = models.ForeignKey(Product, null = True, on_delete = models.SET_NULL)
+    order_items = models.ManyToManyField("OrderItem")
     note = models.CharField(max_length= 300, null = True, blank = True)
     date_created=models.DateTimeField(auto_now_add=True, null=True)
     status = models.CharField(max_length = 200, null = True, choices = STATUS)
+
+    def __str__(self):
+        result = "O" + str(self.id) + " - " + str(self.customer.name)
+        return result
+    
+#stores the relationship between Order and Product
+class OrderItem(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    def __str__(self):
+        result = str(str(self.product)) + " - " + str(self.quantity)
+        return result
