@@ -37,3 +37,7 @@ def profiles(request,pk):
     customer = Customer.objects.get(id=pk) #querying the customer by their id, and the id will be the primary key we are putting in the url path
     context = {"customer": customer}
     return render(request, "ecomm/profile.html", context)
+
+def createOrder(request):
+    context = {}
+    return render(request, "ecomm/order_form.html", context)
