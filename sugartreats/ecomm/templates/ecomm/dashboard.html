@@ -12,6 +12,13 @@
                   <th>Customer</th>
                   <th>Phone</th>
                 </tr>
+                {% for customer in customers %}
+                    <tr>
+                        <td> {{customer.name}} </td>
+                        <td> {{customer.phone}} </td>
+                        <td><a href="">View</a>
+                    </tr>
+                {% endfor %}
             </table>
         </div>
     </div>
@@ -28,6 +35,15 @@
                 <th>Update</th>
                 <th>Remove</th>
                 </tr>
+                {% for order in orders%}
+                    <tr>
+                        <td>O{{order.id}}</td>
+                        <td>{{order.date_created}}</td>
+                        <td>{{order.status}}</td>
+                        <td><a href="">Update</td>
+                        <td><a href="">Remove</td>
+                    </tr>
+                {% endfor %}
             </table>
         </div>
     </div>
@@ -38,11 +54,9 @@
                 <h5><center>PRODUCTS WITH HIGHEST REWARDS</center></h5>
                 <table class = "table table-sm">
                     <tr>
-                    <th>Product 1</th>
-                    <th>Product 2</th>
-                    <th>Product 3</th>
-                    <th>Product 4</th>
-                    <th>Product 5</th>
+                    {% for product in products %}
+                    <td><b>{{product.name}}</b> (#{{product.product_num}})<br>{{product.description}}</td>
+                    {% endfor %}
                     </tr>
                 </table>
             </div>
