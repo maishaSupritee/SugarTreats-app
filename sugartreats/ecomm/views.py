@@ -29,4 +29,6 @@ def products(request):
     return render(request,"ecomm/products.html", {"products": products})
 
 def customers(request):
-    return render(request,"ecomm/customers.html")
+    customer = Customer.objects.all()
+    context = {"customer":customer}
+    return render(request,"ecomm/customers.html", context)
