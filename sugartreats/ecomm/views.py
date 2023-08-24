@@ -1,5 +1,6 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.forms import inlineformset_factory #we need this import to use inline formsets
 from .models import *
 from .forms import *
 
@@ -46,11 +47,26 @@ def profiles(request, pk):
     return render(request, "ecomm/profile.html", context)
 
 
-def createOrder(request):
-    form = OrderForm()
+def createOrder(request, pk):
+    OrderFormSet = inlineformset_factory(Customer, Order, fields = ("order_items", "note", "status"))
+    customer = Customer.objects.get(id=pk)
+    form = OrderForm(initial={"customer":customer}) #the instance of the customer attribute will be the customer we queried with the id
     if request.method == "POST":
-        form = OrderForm(request.post)
+        form = OrderForm(request.POST)
         if form.is_valid():
-            form.save()  # if the data is POST data, we are sending the data to the form, then if the form is valid, we are saving the form. The model form saves the data to the dataset.
-    context = {"form": form}
+            form.save()
+            return redirect('profile', pk=customer.id)
+        
+    context={"form":form}
+    return render(request, "ecomm/order_form.html", context)
+
+def updateOrder(request, pk):
+    order = Order.objects.get(id=pk)
+    form = OrderForm(instance=order) #the item instance we are going to fill out in our form, this fills out all the fields in the form with the order's details
+    if request.method == "POST":
+        form = OrderForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()
+            return redirect("/")
+    context = {"form":form}
     return render(request, "ecomm/order_form.html", context)

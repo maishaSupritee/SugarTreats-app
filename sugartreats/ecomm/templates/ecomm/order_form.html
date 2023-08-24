@@ -1,8 +1,18 @@
 {% extends "ecomm/main.html" %}
 {% load static %}
 {% block content %}
-<form action ="" method = "POST">
-    <input type = submit, name = "Submit">
-</form>
+<br>
+<div class = "row">
+    <div class ="col-md-6">
+        <div class = "card card-body">
+            <form action="" method="POST">
+                {% csrf_token %} {%comment%}a way to pass data securely{%endcomment%}
+                {{form}}
+                <input class = "btn btn-info" type = "submit" value = "Submit">
+            </form>
+        </div>
+    </div>
+</div>
+
 
 {% endblock content %}

@@ -40,7 +40,7 @@
                         <td>O{{order.id}}</td>
                         <td>{{order.date_created}}</td>
                         <td>{{order.status}}</td>
-                        <td><a href="">Update</td>
+                        <td><a class = "btn btn-small btn-info" href="{% url 'update_order' order.id %}">Update</td>
                         <td><a href="">Remove</td>
                     </tr>
                 {% endfor %}
