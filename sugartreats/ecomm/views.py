@@ -15,6 +15,8 @@ def home(request):
     delivered = orders.filter(status="Delivered").count()
     fulfilled = orders.filter(status="Fulfilled").count()
     pending = orders.filter(status="Pending").count()
+    list = orders.order_by("-date_created")
+    ordered_list = list[:5] #returns first five objects
     context = {
         "orders": orders,
         "customers": customers,
@@ -24,6 +26,7 @@ def home(request):
         "delivered": delivered,
         "pending": pending,
         "fulfilled": fulfilled,
+        "ordered_list": ordered_list,
     }
     return render(request, "ecomm/dashboard.html", context)
 
@@ -34,8 +37,11 @@ def products(request):
 
 
 def customers(request):
-    customer = Customer.objects.all()
-    context = {"customer": customer}
+    customers = Customer.objects.all()
+    orders = Order.objects.filter(customer__in=customers)  #We have foreign key to customers from order so 
+                                                            #Here, customer__in=customers filters the Order queryset to include only orders associated with the list of customers you retrieved earlier.
+    orders_count = orders.count()
+    context = {"customers": customers, "orders":orders, "orders_count":orders_count}
     return render(request, "ecomm/customers.html", context)
 
 
@@ -55,8 +61,7 @@ def createOrder(request, pk):
         form = OrderForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('profile', pk=customer.id)
-        
+            return redirect('profile',pk=customer.id)
     context={"form":form}
     return render(request, "ecomm/order_form.html", context)
 
@@ -70,3 +75,11 @@ def updateOrder(request, pk):
             return redirect("/")
     context = {"form":form}
     return render(request, "ecomm/order_form.html", context)
+
+def deleteOrder(request, pk):
+    order = Order.objects.get(id=pk)
+    if request.method == "POST":
+        order.delete()
+        return redirect("/") #just / returns us to home page
+    context = {"order":order}
+    return render(request, "ecomm/delete.html", context)

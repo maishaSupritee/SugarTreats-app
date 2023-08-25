@@ -35,13 +35,13 @@
                 <th>Update</th>
                 <th>Remove</th>
                 </tr>
-                {% for order in orders%}
+                {% for order in ordered_list%}
                     <tr>
                         <td>O{{order.id}}</td>
                         <td>{{order.date_created}}</td>
                         <td>{{order.status}}</td>
                         <td><a class = "btn btn-small btn-info" href="{% url 'update_order' order.id %}">Update</td>
-                        <td><a href="">Remove</td>
+                        <td><a class = "btn btn-small btn-danger" href="{% url 'delete_order' order.id %}">Remove</td>
                     </tr>
                 {% endfor %}
             </table>
