@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.forms import inlineformset_factory #we need this import to use inline formsets
+from django.db.models import Count
 from .models import *
 from .forms import *
 
@@ -38,10 +39,7 @@ def products(request):
 
 def customers(request):
     customers = Customer.objects.all()
-    orders = Order.objects.filter(customer__in=customers)  #We have foreign key to customers from order so 
-                                                            #Here, customer__in=customers filters the Order queryset to include only orders associated with the list of customers you retrieved earlier.
-    orders_count = orders.count()
-    context = {"customers": customers, "orders":orders, "orders_count":orders_count}
+    context = {"customers": customers}
     return render(request, "ecomm/customers.html", context)
 
 

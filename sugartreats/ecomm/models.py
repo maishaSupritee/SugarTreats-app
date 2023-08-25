@@ -44,7 +44,8 @@ class Order(models.Model):
         ("Fulfilled", "Fulfilled"),
         ("Delivered","Delivered"),
     )
-    customer = models.ForeignKey(Customer, null = True, on_delete = models.SET_NULL)
+    #related_name allows us to access the backward relationship so from Order to Customer, so we can now access all the Orders attributes from customer
+    customer = models.ForeignKey(Customer, null = True, on_delete = models.SET_NULL, related_name = 'orders') 
     #product = models.ForeignKey(Product, null = True, on_delete = models.SET_NULL)
     order_items = models.ManyToManyField("OrderItem")
     note = models.CharField(max_length= 300, null = True, blank = True)
