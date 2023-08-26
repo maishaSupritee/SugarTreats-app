@@ -1,6 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from django.forms import inlineformset_factory #we need this import to use inline formsets
+from django.forms import (
+    inlineformset_factory,
+)  # we need this import to use inline formsets
 from django.db.models import Count
 from .models import *
 from .forms import *
@@ -17,7 +19,7 @@ def home(request):
     fulfilled = orders.filter(status="Fulfilled").count()
     pending = orders.filter(status="Pending").count()
     list = orders.order_by("-date_created")
-    ordered_list = list[:5] #returns first five objects
+    ordered_list = list[:5]  # returns first five objects
     context = {
         "orders": orders,
         "customers": customers,
@@ -43,6 +45,12 @@ def customers(request):
     return render(request, "ecomm/customers.html", context)
 
 
+def orders(request):
+    orders = Order.objects.all()
+    context = {"orders": orders}
+    return render(request, "ecomm/orders.html", context)
+
+
 def profiles(request, pk):
     customer = Customer.objects.get(
         id=pk
@@ -52,32 +60,40 @@ def profiles(request, pk):
 
 
 def createOrder(request, pk):
-    OrderFormSet = inlineformset_factory(Customer, Order, fields = ("order_items", "note", "status"))
+    OrderFormSet = inlineformset_factory(
+        Customer, Order, fields=("order_items", "note", "status")
+    )
     customer = Customer.objects.get(id=pk)
-    form = OrderForm(initial={"customer":customer}) #the instance of the customer attribute will be the customer we queried with the id
+    form = OrderForm(
+        initial={"customer": customer}
+    )  # the instance of the customer attribute will be the customer we queried with the id
     if request.method == "POST":
         form = OrderForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('profile',pk=customer.id)
-    context={"form":form}
+            return redirect("profile", pk=customer.id)
+    context = {"form": form}
     return render(request, "ecomm/order_form.html", context)
+
 
 def updateOrder(request, pk):
     order = Order.objects.get(id=pk)
-    form = OrderForm(instance=order) #the item instance we are going to fill out in our form, this fills out all the fields in the form with the order's details
+    form = OrderForm(
+        instance=order
+    )  # the item instance we are going to fill out in our form, this fills out all the fields in the form with the order's details
     if request.method == "POST":
         form = OrderForm(request.POST, instance=order)
         if form.is_valid():
             form.save()
             return redirect("/")
-    context = {"form":form}
+    context = {"form": form}
     return render(request, "ecomm/order_form.html", context)
+
 
 def deleteOrder(request, pk):
     order = Order.objects.get(id=pk)
     if request.method == "POST":
         order.delete()
-        return redirect("/") #just / returns us to home page
-    context = {"order":order}
+        return redirect("/")  # just / returns us to home page
+    context = {"order": order}
     return render(request, "ecomm/delete.html", context)

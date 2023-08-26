@@ -32,6 +32,7 @@ class Product(models.Model):
     price = models.FloatField(null = True)
     date_created=models.DateTimeField(auto_now_add=True, null=True)
     tags = models.ManyToManyField(Tag, blank = True)
+    rewards = models.IntegerField(null = True)
 
     def __str__(self):
         result = str(self.name) + " #" + str(self.product_num) #adding str infront of self.name because name could be null which could give error

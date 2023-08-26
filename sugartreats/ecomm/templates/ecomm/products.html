@@ -13,13 +13,15 @@
                     <th>Category</th>
                     <th>Description</th>
                     <th>Price</th>
+                    <th>Rewards</th>
                 </tr>
                 {% for i in products %}
                     <tr>
                         <td>{{i.name}}</td>
                         <td>{{i.category}}</td>
                         <td>{{i.description}}</td>
-                        <td>{{i.price}}</td>
+                        <td>${{i.price}}</td>
+                        <td>{{i.rewards}}</td>
                     </tr>
                 {% endfor %}
             </table>
