@@ -56,11 +56,18 @@ def profiles(request, pk):
         id=pk
     )  # querying the customer by their id, and the id will be the primary key we are putting in the url path
     orders = Order.objects.filter(customer=customer)
-    order_details = [] #a list
+    order_details = []  # a list
+    total_rewards = 0
     for order in orders:
+        order_rewards = 0
         order_items = OrderItem.objects.filter(orders=order)
-        order_details.append({'order': order, 'order_items': order_items})
-    context = {"customer": customer, "orders":orders, "order_details":order_details}
+        for order_item in order_items:
+            order_rewards += order_item.product.rewards * order_item.quantity
+        total_rewards+=order_rewards
+        order_details.append(
+            {"order": order, "order_items": order_items, "order_rewards": order_rewards}
+        )
+    context = {"customer": customer, "orders": orders, "order_details": order_details, "total_rewards":total_rewards}
     return render(request, "ecomm/profile.html", context)
 
 
