@@ -55,7 +55,12 @@ def profiles(request, pk):
     customer = Customer.objects.get(
         id=pk
     )  # querying the customer by their id, and the id will be the primary key we are putting in the url path
-    context = {"customer": customer}
+    orders = Order.objects.filter(customer=customer)
+    order_details = [] #a list
+    for order in orders:
+        order_items = OrderItem.objects.filter(orders=order)
+        order_details.append({'order': order, 'order_items': order_items})
+    context = {"customer": customer, "orders":orders, "order_details":order_details}
     return render(request, "ecomm/profile.html", context)
 
 
