@@ -72,9 +72,6 @@ def profiles(request, pk):
 
 
 def createOrder(request, pk):
-    OrderFormSet = inlineformset_factory(
-        Customer, Order, fields=("order_items", "note", "status")
-    )
     customer = Customer.objects.get(id=pk)
     form = OrderForm(
         initial={"customer": customer}
