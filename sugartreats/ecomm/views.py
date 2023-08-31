@@ -101,7 +101,9 @@ def updateOrder(request, pk):
 
 def deleteOrder(request, pk):
     order = Order.objects.get(id=pk)
+    order_items = OrderItem.objects.filter(orders=order)
     if request.method == "POST":
+        order_items.delete() #deleting all the order items associated with an order
         order.delete()
         return redirect("/")  # just / returns us to home page
     context = {"order": order}
