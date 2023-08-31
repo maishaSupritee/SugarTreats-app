@@ -35,18 +35,18 @@ def home(request):
 
 
 def products(request):
-    products = Product.objects.all()
+    products = Product.objects.all().order_by('name')
     return render(request, "ecomm/products.html", {"products": products})
 
 
 def customers(request):
-    customers = Customer.objects.all()
+    customers = Customer.objects.all().order_by('name')
     context = {"customers": customers}
     return render(request, "ecomm/customers.html", context)
 
 
 def orders(request):
-    orders = Order.objects.all()
+    orders = Order.objects.all().order_by('-date_created', 'customer') #the minus means we are ordering by reverse of date_created, so last order first
     context = {"orders": orders}
     return render(request, "ecomm/orders.html", context)
 
