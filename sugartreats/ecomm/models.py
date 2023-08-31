@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 class Customer(models.Model):
     name = models.CharField(max_length=200, null=True)
-    email = models.CharField(max_length=200, null=True)
+    email = models.EmailField(null=True)
     phone = models.CharField(max_length=200, null=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
 
@@ -27,7 +27,7 @@ class Product(models.Model):
     )
     name = models.CharField(max_length=200, null=True)
     product_num = models.CharField(max_length=100, unique=True)
-    description = models.CharField(max_length=200, null=True)
+    description = models.TextField(max_length=200, null=True)
     category = models.CharField(max_length=200, null=True, choices = CATEGORY)
     price = models.FloatField(null = True)
     date_created=models.DateTimeField(auto_now_add=True, null=True)
@@ -48,8 +48,8 @@ class Order(models.Model):
     #related_name allows us to access the backward relationship so from Order to Customer, so we can now access all the Orders attributes from customer
     customer = models.ForeignKey(Customer, null = True, on_delete = models.SET_NULL, related_name = 'orders') 
     #product = models.ForeignKey(Product, null = True, on_delete = models.SET_NULL)
-    order_items = models.ManyToManyField("OrderItem", related_name = 'orders')
-    note = models.CharField(max_length= 300, null = True, blank = True)
+    order_items = models.ManyToManyField("OrderItem", related_name = 'orders') #every Order has many order_items
+    note = models.TextField(max_length= 300, null = True, blank = True)
     date_created=models.DateTimeField(auto_now_add=True, null=True)
     status = models.CharField(max_length = 200, null = True, choices = STATUS)
 
@@ -61,7 +61,8 @@ class Order(models.Model):
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
-
+    order = models.ForeignKey(Order, null = True, on_delete= models.CASCADE) #every OrderItem is associated with 1 order
+    
     def __str__(self):
         result = str(str(self.product)) + " - " + str(self.quantity)
         return result

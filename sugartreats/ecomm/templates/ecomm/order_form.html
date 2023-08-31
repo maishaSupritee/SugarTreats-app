@@ -7,7 +7,12 @@
         <div class = "card card-body">
             <form action="" method="POST">
                 {% csrf_token %} {%comment%}a way to pass data securely{%endcomment%}
-                {{form}}
+                {{ formset.management_form }} {%comment%}whenever we use a for loop we need this so it saves each form individually{%endcomment%}
+                {% for form in formset %} 
+                    {{form.product}}
+                    {{form.quantity}}
+                    <hr>
+                {% endfor %}
                 <input class = "btn btn-info" type = "submit" value = "Submit">
             </form>
         </div>
