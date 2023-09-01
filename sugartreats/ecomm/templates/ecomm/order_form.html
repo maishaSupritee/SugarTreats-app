@@ -6,12 +6,14 @@
     <div class ="col-md-6">
         <div class = "card card-body">
             <form action="" method="POST">
-                {% csrf_token %} {%comment%}a way to pass data securely{%endcomment%}
-                {{ formset.management_form }} {%comment%}whenever we use a for loop we need this so it saves each form individually{%endcomment%}
+                {% csrf_token %} <!--a way to pass data securely-->
+                {{ formset.management_form }} <!--whenever we use a for loop we need this so it saves each form individually-->
                 {% for form in formset %} 
                     {{form}}
                     <hr>
                 {% endfor %}
+
+                {{ order_form.as_p }}
                 <input class = "btn btn-info" type = "submit" value = "Submit">
             </form>
         </div>

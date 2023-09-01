@@ -79,18 +79,24 @@ def profiles(request, pk):
 
 def createOrder(request, pk):
     customer = Customer.objects.get(id=pk)
-
     if request.method == "POST":
-        # transaction. atomic is a context manager to ensure that the Order and OrderItem instances 
+        order_form = OrderForm(request.POST) #just for handling note and status
+        # transaction.atomic is a context manager to ensure that the Order and OrderItem instances
         # are created within the same database transaction.
         with transaction.atomic():
-            order = Order.objects.create(customer=customer, status="Pending")
+            order = Order.objects.create(customer=customer)
             OrderItemFormset = inlineformset_factory(
-                Order, OrderItem, fields=('product', 'quantity'), extra = 5
+                Order, OrderItem, fields=('product', 'quantity'), extra=5
             )
             formset = OrderItemFormset(request.POST, instance=order, queryset=OrderItem.objects.none())
 
-            if formset.is_valid():
+            if formset.is_valid() and order_form.is_valid():
+                note = order_form.cleaned_data.get("note")
+                status = order_form.cleaned_data.get("status")
+
+                order.note = note
+                order.status = status
+                order.save()
                 for form in formset:
                     product = form.cleaned_data.get("product")
                     quantity = form.cleaned_data.get("quantity")
@@ -104,41 +110,47 @@ def createOrder(request, pk):
             else:
                 print("Formset errors:", formset.errors)
     else:
+        order_form = OrderForm()
         OrderItemFormset = inlineformset_factory(
-            Order, OrderItem, fields=('product', 'quantity'), extra = 5
+            Order, OrderItem, fields=('product', 'quantity'), extra=5
         )
         formset = OrderItemFormset(instance=Order())
-
-    context = {"formset": formset}
+    context = {"formset": formset, "order_form": order_form}
     return render(request, "ecomm/order_form.html", context)
 
 def updateOrder(request, pk):
     order = Order.objects.get(id=pk)
     customer = Customer.objects.get(orders=order)
-    order_items = order.order_items.all()  # Get the queryset of OrderItem instances
+    order_items = order.order_items.all()
 
     OrderItemFormset = inlineformset_factory(
         Order, OrderItem, fields=('product', 'quantity'), extra=5
     )
 
     if request.method == "POST":
+        order_form = OrderForm(request.POST)
         formset = OrderItemFormset(request.POST, instance=order)
-        if formset.is_valid():
-            instances = formset.save(commit=False)  # Get instances without saving
+        if formset.is_valid() and order_form.is_valid():
+            note = order_form.cleaned_data.get("note")
+            status = order_form.cleaned_data.get("status")
+
+            order.note = note
+            order.status = status
+            order.save()
+            instances = formset.save(commit=False)
             for instance in instances:
-                instance.order = order  # Associate the instance with the current order
-                instance.save()  # Save the instance with the correct order
+                instance.order = order
+                instance.save()
                 order.order_items.add(instance)
-            formset.save()  
+            formset.save()
             return redirect("profile", pk=customer.id)
         else:
             print("Formset errors:", formset.errors)
     else:
+        order_form = OrderForm()
         formset = OrderItemFormset(instance=order)
-
-    context = {"formset": formset}
+    context = {"formset": formset, "order_form": order_form}
     return render(request, "ecomm/order_form.html", context)
-
 
 
 
