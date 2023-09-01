@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.forms import (
-    inlineformset_factory,
+    inlineformset_factory, modelform_factory, BaseInlineFormSet
 )  # we need this import to use inline formsets
 from django.db import transaction
 from .models import *
@@ -86,16 +86,14 @@ def createOrder(request, pk):
         with transaction.atomic():
             order = Order.objects.create(customer=customer, status="Pending")
             OrderItemFormset = inlineformset_factory(
-                Order, OrderItem, fields=["product", "quantity"]
+                Order, OrderItem, fields=('product', 'quantity'), extra = 5
             )
-            formset = OrderItemFormset(request.POST, instance=order)
+            formset = OrderItemFormset(request.POST, instance=order, queryset=OrderItem.objects.none())
 
             if formset.is_valid():
-                print("Formset is valid")
                 for form in formset:
                     product = form.cleaned_data.get("product")
                     quantity = form.cleaned_data.get("quantity")
-                    print("Product:", product, "Quantity:", quantity)
 
                     if product and quantity > 0:
                         order_item = OrderItem.objects.create(
@@ -107,26 +105,41 @@ def createOrder(request, pk):
                 print("Formset errors:", formset.errors)
     else:
         OrderItemFormset = inlineformset_factory(
-            Order, OrderItem, fields=["product", "quantity"]
+            Order, OrderItem, fields=('product', 'quantity'), extra = 5
         )
         formset = OrderItemFormset(instance=Order())
 
     context = {"formset": formset}
     return render(request, "ecomm/order_form.html", context)
 
-
 def updateOrder(request, pk):
     order = Order.objects.get(id=pk)
-    form = OrderForm(
-        instance=order
-    )  # the item instance we are going to fill out in our form, this fills out all the fields in the form with the order's details
+    customer = Customer.objects.get(orders=order)
+    order_items = order.order_items.all()  # Get the queryset of OrderItem instances
+
+    OrderItemFormset = inlineformset_factory(
+        Order, OrderItem, fields=('product', 'quantity'), extra=5
+    )
+
     if request.method == "POST":
-        form = OrderForm(request.POST, instance=order)
-        if form.is_valid():
-            form.save()
-            return redirect("/")
-    context = {"form": form}
+        formset = OrderItemFormset(request.POST, instance=order)
+        if formset.is_valid():
+            instances = formset.save(commit=False)  # Get instances without saving
+            for instance in instances:
+                instance.order = order  # Associate the instance with the current order
+                instance.save()  # Save the instance with the correct order
+                order.order_items.add(instance)
+            formset.save()  
+            return redirect("profile", pk=customer.id)
+        else:
+            print("Formset errors:", formset.errors)
+    else:
+        formset = OrderItemFormset(instance=order)
+
+    context = {"formset": formset}
     return render(request, "ecomm/order_form.html", context)
+
+
 
 
 def deleteOrder(request, pk):
