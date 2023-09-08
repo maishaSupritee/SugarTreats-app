@@ -6,6 +6,7 @@ from django.forms import (
 from django.db import transaction
 from .models import *
 from .forms import *
+from .filters import OrderFilter
 
 
 # Create your views here.
@@ -58,6 +59,9 @@ def profiles(request, pk):
         id=pk
     )  # querying the customer by their id, and the id will be the primary key we are putting in the url path
     orders = Order.objects.filter(customer=customer)
+    myfilter = OrderFilter(request.GET, queryset = orders) #filter the queryset data down based on what the request.GET data is
+    orders = myfilter.qs #remake the orders with the filtered data
+    
     order_details = []  # a list
     total_rewards = 0
     for order in orders:
@@ -74,6 +78,7 @@ def profiles(request, pk):
         "orders": orders,
         "order_details": order_details,
         "total_rewards": total_rewards,
+        "myfilter": myfilter,
     }
     return render(request, "ecomm/profile.html", context)
 

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "ecomm",
+
+    "django_filters"
 ]
 
 MIDDLEWARE = [

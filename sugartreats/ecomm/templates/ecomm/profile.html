@@ -9,7 +9,9 @@
       <a class="btn btn-outline-info btn-sm btn-block" href=""
         >Update Customer</a
       >
-      <a class="btn btn-outline-info btn-sm btn-block" href="{% url 'create_order' customer.id %}"
+      <a
+        class="btn btn-outline-info btn-sm btn-block"
+        href="{% url 'create_order' customer.id %}"
         >Place Order</a
       >
     </div>
@@ -30,14 +32,27 @@
       <hr />
       <h4 style="text-align: center; padding: 5px">{{orders.count}}</h4>
       <h5>Total Rewards</h5>
-      <hr/>
+      <hr />
       <h4 style="text-align: center; padding: 5px">{{total_rewards}}</h4>
+    </div>
+  </div>
+</div>
+<br />
+<div class="row">
+  <div class="col">
+    <div class="card card-body">
+      <form method="get">
+        {{myfilter.form}}
+        <button class="btn btn-outline-success my-2 my-sm-0" type="submit">
+          Search
+        </button>
+      </form>
     </div>
   </div>
 </div>
 
 
-<br>
+<br />
 <hr />
 <div class="row">
   <div class="col-md">
@@ -46,6 +61,7 @@
         <tr>
           <th>Order Number</th>
           <th>Products</th>
+          <th>Note</th>
           <th>Date Ordered</th>
           <th>Status</th>
           <th>Rewards Earned</th>
@@ -54,25 +70,40 @@
         </tr>
 
         {% for order_detail in order_details %}
-            <tr>
-            <td>O{{order_detail.order.id}}</td>
-            <td> 
-                <ul style="list-style: none; padding-left: 0;">    
-                    {% for order_item in order_detail.order_items %}   
-                        <li>{{order_item.product.name}} - {{order_item.quantity}}</li>
-                    {% endfor %}
-                </ul>
-            </td>
-            <td>{{order_detail.order.date_created}}</td>
-            <td>{{order_detail.order.status}}</td> 
-            <td>{{order_detail.order_rewards}}</td>
-            <td><a class = "btn btn-sm btn-info" href="{% url 'update_order' order_detail.order.id %}">Update</a></td>
-            <td><a class = "btn btn-sm btn-danger" href="{% url 'delete_order' order_detail.order.id %}">Delete</a></td>
-        {% endfor %}
+        <tr>
+          <td>O{{order_detail.order.id}}</td>
+          <td>
+            <ul style="list-style: none; padding-left: 0">
+              {% for order_item in order_detail.order_items %}
+              <li>{{order_item.product.name}} - {{order_item.quantity}}</li>
+              {% endfor %}
+            </ul>
+          </td>
+          <td>{{order_detail.order.note}}</td>
+          <td>{{order_detail.order.date_created}}</td>
+          <td>{{order_detail.order.status}}</td>
+          <td>{{order_detail.order_rewards}}</td>
+          <td>
+            <a
+              class="btn btn-sm btn-info"
+              href="{% url 'update_order' order_detail.order.id %}"
+              >Update</a
+            >
+          </td>
+          <td>
+            <a
+              class="btn btn-sm btn-danger"
+              href="{% url 'delete_order' order_detail.order.id %}"
+              >Delete</a
+            >
+          </td>
+          {% endfor %}
         </tr>
       </table>
     </div>
   </div>
 </div>
+
+
 
 {% endblock %}
