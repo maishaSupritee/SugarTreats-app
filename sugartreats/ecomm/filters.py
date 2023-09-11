@@ -9,4 +9,10 @@ class OrderFilter(django_filters.FilterSet):
     class Meta: #need a minimum of 2 attributes
         model = Order
         fields = "__all__"
-        exclude = ['customer', 'date_created']
+        exclude = ['customer', 'date_created', 'order_items']
+    
+class ItemFilter(django_filters.FilterSet):
+    class Meta:
+        model = OrderItem
+        fields = "__all__"
+        

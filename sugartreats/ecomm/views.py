@@ -6,8 +6,8 @@ from django.forms import (
 from django.db import transaction
 from .models import *
 from .forms import *
-from .filters import OrderFilter
-
+from .filters import *
+from django.db.models import Q
 
 # Create your views here.
 def home(request):
@@ -59,14 +59,33 @@ def profiles(request, pk):
         id=pk
     )  # querying the customer by their id, and the id will be the primary key we are putting in the url path
     orders = Order.objects.filter(customer=customer)
-    myfilter = OrderFilter(request.GET, queryset = orders) #filter the queryset data down based on what the request.GET data is
-    orders = myfilter.qs #remake the orders with the filtered data
+    orderItems = OrderItem.objects.filter(order__customer = customer)
+
+    #Work for the search filter
+    orderfilter = OrderFilter(request.GET, queryset = orders) #filter the queryset data down based on what the request.GET data is
+    itemfilter = ItemFilter(request.GET, queryset = orderItems)
     
+     # Apply filters for Order attributes
+    if orderfilter.qs:
+        orders = orderfilter.qs
+
+    # Apply filters for OrderItem attributes
+    if itemfilter.qs:
+        orderItems = itemfilter.qs
+
+    # Combine the results based on the filter criteria
+    orders = orders.filter(id__in=orderItems.values_list('order_id', flat=True))
+    #values_list returns a queryset as a list of tuples for ex. QuerySet [(1,2),(2,3)]
+    #since we are using values_list with a single field order_id, 
+    #we use flat=True and get QuerySet [1, 2] instead of QuerySet [ (1,), (2,)]
+    
+
+    #work for getting rewards information
     order_details = []  # a list
     total_rewards = 0
     for order in orders:
         order_rewards = 0
-        order_items = OrderItem.objects.filter(orders=order)
+        order_items = OrderItem.objects.filter(order=order)
         for order_item in order_items:
             order_rewards += order_item.product.rewards * order_item.quantity
         total_rewards += order_rewards
@@ -78,7 +97,8 @@ def profiles(request, pk):
         "orders": orders,
         "order_details": order_details,
         "total_rewards": total_rewards,
-        "myfilter": myfilter,
+        "orderfilter": orderfilter,
+        "itemfilter" : itemfilter,
     }
     return render(request, "ecomm/profile.html", context)
 
