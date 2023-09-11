@@ -7,6 +7,8 @@ class OrderItemForm(ModelForm):
         model = OrderItem
         fields = "__all__"
 
-class OrderForm(forms.Form):
-    note = forms.CharField(max_length=300, required = False)
-    status = forms.ChoiceField(choices=Order.STATUS, required=True)
+class OrderForm(ModelForm):
+    class Meta:
+        model = Order
+        fields = ["note", "status"]
+    

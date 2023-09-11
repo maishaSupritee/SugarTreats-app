@@ -153,7 +153,7 @@ def updateOrder(request, pk):
     )
 
     if request.method == "POST":
-        order_form = OrderForm(request.POST)
+        order_form = OrderForm(request.POST, instance=order)
         formset = OrderItemFormset(request.POST, instance=order)
         if formset.is_valid() and order_form.is_valid():
             note = order_form.cleaned_data.get("note")
@@ -172,7 +172,7 @@ def updateOrder(request, pk):
         else:
             print("Formset errors:", formset.errors)
     else:
-        order_form = OrderForm()
+        order_form = OrderForm(instance=order)
         formset = OrderItemFormset(instance=order)
     context = {"formset": formset, "order_form": order_form}
     return render(request, "ecomm/order_form.html", context)
