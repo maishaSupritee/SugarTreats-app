@@ -5,14 +5,14 @@ SugarTreats is a Customer Management App designed to streamline customer relatio
 For this project, I have used an example of a candy company when creating the app to portray how it will look like in its working stages. This is my first ever project in Django, made with the hopes of learning the framework. There are many ecommerce websites or application projects made with Django, but far fewer applications for handling ecommerce from the business perspective instead of the customers. This is why I chose to make this app from the business perspective.
 
 ## Key Features
-1. Centralized Customer Information
-Provides a central repository for all customer information including phone numbers, email addresses, purchase history, and more.
+- Centralized Customer Information
+  - Provides a central repository for all customer information including phone numbers, email addresses, purchase history, and more.
 
-2. Rewards Tracking
-Keeps track of rewards associated with each product, total rewards earned by customers per order and total rewards earned by a customer across all their purchase history.
+- Rewards Tracking
+  - Keeps track of rewards associated with each product, total rewards earned by customers per order and total rewards earned by a customer across all their purchase history.
 
-3. Order Management
-Efficiently manages customer orders, their status, and history.
+- Order Management
+  - Efficiently manages customer orders, their status, and history.
 
 # Installation for Windows
 ## Python Installation:
