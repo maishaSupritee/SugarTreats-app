@@ -1,6 +1,17 @@
 # SugarTreats - Customer Management App on the Enterprise level
 
 SugarTreats is a Customer Management App designed to streamline customer relationship management for a business. Tailored to meet the unique needs of companies and their employees, this app provides an efficient and user-friendly solution for managing customer information, memberships, orders, rewards, and promotions.
+<img width="950" alt="ss1" src="https://github.com/maishaSupritee/SugarTreats-app/assets/74114117/a4b3bdcb-4160-4b07-b309-38598cdf3f6a">
+
+<img width="960" alt="ss2" src="https://github.com/maishaSupritee/SugarTreats-app/assets/74114117/955ff0ae-9e7f-4ec0-b826-a0335a9c2ec8">
+
+<img width="960" alt="ss3" src="https://github.com/maishaSupritee/SugarTreats-app/assets/74114117/421b3e2e-0003-42b6-9c4e-900b6781d5d3">
+
+<img width="947" alt="ss4" src="https://github.com/maishaSupritee/SugarTreats-app/assets/74114117/dd55de10-628c-4515-bb2d-842cd5895237">
+
+<img width="947" alt="ss5" src="https://github.com/maishaSupritee/SugarTreats-app/assets/74114117/91b50bf0-f385-4d0c-ae05-395fafeec577">
+
+<img width="949" alt="ss6" src="https://github.com/maishaSupritee/SugarTreats-app/assets/74114117/a30c57f4-9962-4b0c-a322-17642f27c549">
 
 ### Purpose:
 
