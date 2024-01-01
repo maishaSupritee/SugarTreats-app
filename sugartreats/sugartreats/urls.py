@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-
+from ecomm import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("ecomm.urls")),
+    #url patterns for our api
+    path("api-customers/", views.customer_list),
 ]

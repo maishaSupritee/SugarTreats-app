@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "ecomm",
 
-    "django_filters"
+    "django_filters",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [

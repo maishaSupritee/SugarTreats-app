@@ -9,6 +9,15 @@ from .forms import *
 from .filters import *
 from django.db.models import Q
 
+from django.http import JsonResponse
+from .serializers import *
+
+#Views for REST API
+def customer_list(request):
+    customers = Customer.objects.all()
+    serializer = CustomerSerializer(customers, many=True)
+    return JsonResponse({"customers": serializer.data}, safe=False)
+
 # Create your views here.
 def home(request):
     customers = Customer.objects.all()
