@@ -22,4 +22,7 @@ urlpatterns = [
     path("", include("ecomm.urls")),
     #url patterns for our api
     path("api-customers/", views.customer_list),
+    path("api-products/", views.product_list),
+    path("api-orders/", views.order_list), 
+    path("api-order-items/", views.orderItem_list),
 ]

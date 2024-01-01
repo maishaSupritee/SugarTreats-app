@@ -18,6 +18,21 @@ def customer_list(request):
     serializer = CustomerSerializer(customers, many=True)
     return JsonResponse({"customers": serializer.data}, safe=False)
 
+def product_list(request):
+    products = Product.objects.all()
+    serializer = ProductSerializer(products, many=True)
+    return JsonResponse({"products": serializer.data}, safe=False)
+
+def order_list(request):
+    orders = Order.objects.all()
+    serializer = OrderSerializer(orders, many=True)
+    return JsonResponse({"orders": serializer.data}, safe=False)
+
+def orderItem_list(request):
+    orderItems = OrderItem.objects.all()
+    serializer = OrderItemSerializer(orderItems, many=True)
+    return JsonResponse({"orderItems": serializer.data}, safe=False)
+
 # Create your views here.
 def home(request):
     customers = Customer.objects.all()
