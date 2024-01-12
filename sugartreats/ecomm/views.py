@@ -11,27 +11,140 @@ from django.db.models import Q
 
 from django.http import JsonResponse
 from .serializers import *
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 
 #Views for REST API
-def customer_list(request):
-    customers = Customer.objects.all()
-    serializer = CustomerSerializer(customers, many=True)
-    return JsonResponse({"customers": serializer.data}, safe=False)
+@api_view(['GET','POST'])
+def customer_list(request, format=None):
+    if request.method == 'GET':
+        customers = Customer.objects.all()
+        serializer = CustomerSerializer(customers, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = CustomerSerializer(data=request.data) #serialize the data sent with POST
+        if serializer.is_valid(): #if data is valid
+            serializer.save() #save a new customer with that data
+            return Response(serializer.data, status=status.HTTP_201_CREATED) #return the customer data as well as status code
 
-def product_list(request):
-    products = Product.objects.all()
-    serializer = ProductSerializer(products, many=True)
-    return JsonResponse({"products": serializer.data}, safe=False)
+@api_view(['GET', 'PUT', 'DELETE'])
+def customer_detail(request, pk, format=None):
+    try:
+        customer = Customer.objects.get(pk=pk)
+    except Customer.DoesNotExist: #if customer doesn't exist display error 404
+        return Response(status = status.HTTP_404_NOT_FOUND) 
+    if request.method == 'GET':
+        serializer = CustomerSerializer(customer)
+        return Response(serializer.data)
+    elif request.method == 'PUT': #update individual customer info
+        serializer = CustomerSerializer(customer, data=request.data)
+        if serializer.is_valid():
+            serializer.save() #save customer with the updated info
+            return Response(serializer.data) #return the updated customer
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE': #delete any individual customer
+        customer.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-def order_list(request):
-    orders = Order.objects.all()
-    serializer = OrderSerializer(orders, many=True)
-    return JsonResponse({"orders": serializer.data}, safe=False)
+@api_view(['GET', 'POST'])
+def product_list(request, format=None):
+    if request.method == 'GET':    
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = ProductSerializer(data=request.data) 
+        if serializer.is_valid(): 
+            serializer.save() 
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-def orderItem_list(request):
-    orderItems = OrderItem.objects.all()
-    serializer = OrderItemSerializer(orderItems, many=True)
-    return JsonResponse({"orderItems": serializer.data}, safe=False)
+@api_view(['GET', 'PUT', 'DELETE'])
+def product_detail(request, pk, format=None):
+    try:
+        product = Product.objects.get(pk=pk)
+    except Product.DoesNotExist: #if product doesn't exist display error 404
+        return Response(status = status.HTTP_404_NOT_FOUND) 
+    if request.method == 'GET':
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
+    elif request.method == 'PUT': #update individual product info
+        serializer = ProductSerializer(product, data=request.data)
+        if serializer.is_valid():
+            serializer.save() #save product with the updated info
+            return Response(serializer.data) #return the updated product
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE': #delete any individual product
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+@api_view(['GET','POST'])
+def order_list(request, format=None):
+    if request.method == 'GET':
+        orders = Order.objects.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            order = serializer.save()
+            # Create order items
+            order_items_data = request.data.get('order_items', [])
+            for order_item_data in order_items_data:
+                # Convert dictionary to OrderItem instance
+                order_item_serializer = OrderItemSerializer(data=order_item_data)
+                if order_item_serializer.is_valid():
+                    order_item_serializer.save(order=order)  # Pass the order instance to set the relationship
+                else:
+                    # Return a response in case of invalid order item
+                    return Response(order_item_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+def order_detail(request, pk, format=None):
+    try:
+        order = Order.objects.get(pk=pk)
+    except Order.DoesNotExist: #if order doesn't exist display error 404
+        return Response(status = status.HTTP_404_NOT_FOUND) 
+    if request.method == 'GET':
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
+    elif request.method == 'PUT': #update individual order info
+        serializer = OrderSerializer(order, data=request.data)
+        if serializer.is_valid():
+            serializer.save() #save order with the updated info
+            return Response(serializer.data) #return the updated order
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE': #delete any individual order
+        order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['GET']) #order_items should only be automatically created when a new order is created
+def orderItem_list(request, format=None):
+    if request.method=='GET':
+        orderItems = OrderItem.objects.all()
+        serializer = OrderItemSerializer(orderItems, many=True)
+        return Response(serializer.data)
+    
+@api_view(['GET', 'PUT', 'DELETE'])
+def order_item_detail(request, pk, format=None):
+    try:
+        order_item = OrderItem.objects.get(pk=pk)
+    except OrderItem.DoesNotExist: #if order_item doesn't exist display error 404
+        return Response(status = status.HTTP_404_NOT_FOUND) 
+    if request.method == 'GET':
+        serializer = OrderItemSerializer(order_item)
+        return Response(serializer.data)
+    elif request.method == 'PUT': #update individual order_item info
+        serializer = OrderItemSerializer(order_item, data=request.data)
+        if serializer.is_valid():
+            serializer.save() #save order_item with the updated info
+            return Response(serializer.data) #return the updated order_item
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE': #delete any individual order_item
+        order_item.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Create your views here.
 def home(request):

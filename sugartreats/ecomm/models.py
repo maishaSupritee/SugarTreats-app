@@ -8,7 +8,7 @@ class Customer(models.Model):
     phone = models.CharField(max_length=200, null=True)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
 
-    def __str__(self):
+    def __str__(self): #changes how we represent an object of the customer model
         result = "(C" + str(self.id) + ") " + str(self.name) #adding str infront of self.name because name could be null which could give error
         return result
 

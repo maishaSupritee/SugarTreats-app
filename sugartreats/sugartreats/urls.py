@@ -17,6 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from ecomm import views
+from rest_framework.urlpatterns import format_suffix_patterns
+
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("ecomm.urls")),
@@ -25,4 +27,10 @@ urlpatterns = [
     path("api-products/", views.product_list),
     path("api-orders/", views.order_list), 
     path("api-order-items/", views.orderItem_list),
+    path("api-customers/<str:pk>/", views.customer_detail),
+    path("api-products/<str:pk>/", views.product_detail),
+    path("api-orders/<str:pk>/", views.order_detail),
+    path("api-order-items/<str:pk>/", views.order_item_detail),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)
