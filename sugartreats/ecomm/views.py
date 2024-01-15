@@ -9,11 +9,15 @@ from .forms import *
 from .filters import *
 from django.db.models import Q
 
+#for REST API work
 from django.http import JsonResponse
 from .serializers import *
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+
+#for user login/registration
+from django.contrib.auth.forms import UserCreationForm
 
 #Views for REST API
 @api_view(['GET','POST'])
@@ -147,6 +151,20 @@ def order_item_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Create your views here.
+def register(request):
+    form = CreateUserForm()
+
+    if request.method == "POST":
+        form = CreateUserForm(request.data)
+        if form.is_valid():
+            form.save()
+
+    context = {'form': form}
+    return render(request, "ecomm/register.html", context)
+
+def login(request):
+    return render(request, "ecomm/login.html")
+
 def home(request):
     customers = Customer.objects.all()
     orders = Order.objects.all()

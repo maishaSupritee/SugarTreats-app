@@ -3,6 +3,8 @@ from .import views
 
 urlpatterns = [
     path("", views.home, name = "home"),
+    path("register/", views.register, name = "register"),
+    path("login/", views.login, name = "login"),
     path("products/", views.products, name = "products"),
     path("customers/", views.customers, name = "customers"),
     path("orders/", views.orders, name = "orders"),
