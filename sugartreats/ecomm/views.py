@@ -18,6 +18,7 @@ from rest_framework import status
 
 #for user login/registration
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages #to use flash messages
 
 #Views for REST API
 @api_view(['GET','POST'])
@@ -155,9 +156,12 @@ def register(request):
     form = CreateUserForm()
 
     if request.method == "POST":
-        form = CreateUserForm(request.data)
+        form = CreateUserForm(request.POST) 
         if form.is_valid():
             form.save()
+            user = form.cleaned_data.get('username') #just get the username from the form
+            messages.success(request, "Account successfully created for " + user) #flash message that will display after a user has registered
+            return redirect('login') #redirect user to login page once they are registered
 
     context = {'form': form}
     return render(request, "ecomm/register.html", context)
